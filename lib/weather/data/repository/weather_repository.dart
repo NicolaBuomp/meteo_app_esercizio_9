@@ -13,6 +13,29 @@ class WeatherRepository {
         queryParameters: {
           'key': _apiKey,
           'q': city,
+          'lang': 'it',
+          'aqi': 'no',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return WeatherModel.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load weather data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching weather data: $e');
+    }
+  }
+
+  Future<WeatherModel> fetchWeatherLatLong(double latitude, double longitude) async {
+    try {
+      final response = await _dio.get(
+        _baseUrl,
+        queryParameters: {
+          'key': _apiKey,
+          'q': '$latitude,$longitude',
+          'lang': 'it',
           'aqi': 'no',
         },
       );

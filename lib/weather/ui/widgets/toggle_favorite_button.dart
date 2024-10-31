@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../di/favorite_cities_provider.dart';
 
-class FavoriteButton extends ConsumerWidget {
+class ToggleFavoriteButton extends ConsumerWidget {
   final String city;
 
-  const FavoriteButton({
+  const ToggleFavoriteButton({
     super.key,
     required this.city,
   });

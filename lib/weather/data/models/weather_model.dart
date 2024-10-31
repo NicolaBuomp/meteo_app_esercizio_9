@@ -1,5 +1,7 @@
 class WeatherModel {
   final String location;
+  final String region;
+  final String country;
   final String localtime;
   final double temperature;
   final String condition;
@@ -9,6 +11,8 @@ class WeatherModel {
 
   WeatherModel({
     required this.location,
+    required this.region,
+    required this.country,
     required this.localtime,
     required this.temperature,
     required this.condition,
@@ -20,6 +24,8 @@ class WeatherModel {
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     return WeatherModel(
       location: json['location']['name'] ?? '',
+      region: json['location']['region'] ?? '',
+      country: json['location']['country'] ?? '',
       localtime: json['location']['localtime'] ?? '',
       temperature: json['current']['temp_c'] ?? 0.0,
       condition: json['current']['condition']['text'] ?? '',

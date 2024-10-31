@@ -36,12 +36,41 @@ class WeatherNotifier extends StateNotifier<AsyncValue<WeatherModel?>> {
 
       // Se viene fornito il nome della città, carica i dati dalla rete
       if (city != null && city.isNotEmpty) {
-        state = const AsyncValue
-            .loading(); // Mostra un caricamento mentre vengono caricati i nuovi dati
+        state = const AsyncValue.loading();
         final weatherData = await _repository.fetchWeather(city);
 
         await _weatherService.saveWeatherData(weatherData);
         state = AsyncValue.data(weatherData);
+      }
+    } on CityNotFoundException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> loadWeatherLatLong(double latitude, double longitude) async {
+    try {
+      if (latitude != null && longitude != null) {
+        state = const AsyncValue.loading();
+        final weatherData = await _repository.fetchWeatherLatLong(latitude, longitude);
+
+        await _weatherService.saveWeatherData(weatherData);
+        state = AsyncValue.data(weatherData);
+      }
+    } on CityNotFoundException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> refreshWeather() async {
+    try {
+      // Una funzione per il refresh dei dati
+      final cachedData = await _weatherService.getWeatherData();
+      if (cachedData != null) {
+        loadWeather(city: cachedData.location);
       }
     } on CityNotFoundException catch (e) {
       state = AsyncValue.error(e, StackTrace.current);

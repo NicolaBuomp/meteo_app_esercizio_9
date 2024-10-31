@@ -19,7 +19,7 @@ class SearchInput extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.grey[200],
+        fillColor: Colors.transparent.withOpacity(0.2),
       ),
     );
   }

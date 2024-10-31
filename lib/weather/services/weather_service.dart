@@ -9,6 +9,8 @@ class WeatherService {
     final prefs = await SharedPreferences.getInstance();
     final weatherData = jsonEncode({
       'location': weather.location,
+      "region": weather.region,
+      "country": weather.country,
       'localtime': weather.localtime,
       'temperature': weather.temperature,
       'condition': weather.condition,
@@ -26,7 +28,9 @@ class WeatherService {
       final json = jsonDecode(weatherData);
       return WeatherModel(
         location: json['location'],
-        localtime: json['location'],
+        region: json['region'],
+        country: json['country'],
+        localtime: json['localtime'],
         temperature: json['temperature'],
         condition: json['condition'],
         iconUrl: json['iconUrl'],
