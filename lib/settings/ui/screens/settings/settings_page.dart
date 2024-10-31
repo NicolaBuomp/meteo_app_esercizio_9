@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meteo_app_esercizio_9/Base/di/theme_provider.dart';
 import 'package:meteo_app_esercizio_9/weather/di/favorite_cities_provider.dart';
 import 'package:meteo_app_esercizio_9/weather/di/weather_provider.dart';
 
@@ -8,6 +9,9 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final themeNotifier = ref.read(themeModeProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Impostazioni'),
@@ -52,6 +56,44 @@ class SettingsPage extends ConsumerWidget {
                 'Elimina tutti i dati',
                 style: TextStyle(color: Colors.white),
               ),
+            ),
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            const Text(
+              'Tema dell\'app',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            RadioListTile<ThemeMode>(
+              title: const Text('Chiaro'),
+              value: ThemeMode.light,
+              groupValue: themeMode,
+              onChanged: (value) {
+                if (value != null) {
+                  themeNotifier.state = value;
+                }
+              },
+            ),
+            RadioListTile<ThemeMode>(
+              title: const Text('Scuro'),
+              value: ThemeMode.dark,
+              groupValue: themeMode,
+              onChanged: (value) {
+                if (value != null) {
+                  themeNotifier.state = value;
+                }
+              },
+            ),
+            RadioListTile<ThemeMode>(
+              title: const Text('Automatico'),
+              value: ThemeMode.system,
+              groupValue: themeMode,
+              onChanged: (value) {
+                if (value != null) {
+                  themeNotifier.state = value;
+                }
+              },
             ),
           ],
         ),
