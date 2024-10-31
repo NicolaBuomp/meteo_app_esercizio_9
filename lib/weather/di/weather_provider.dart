@@ -24,15 +24,8 @@ class WeatherNotifier extends StateNotifier<AsyncValue<WeatherModel?>> {
     try {
       // Carica i dati meteo dalla cache locale se disponibili
       final cachedData = await _weatherService.getWeatherData();
-      if (cachedData != null) {
-        state = AsyncValue.data(cachedData);
-      } else if (city == null || city.isEmpty) {
-        // Se non ci sono dati nella cache e nessuna città è stata fornita, mostra un messaggio di errore appropriato
-        state = AsyncValue.error(
-            'Nessun dato disponibile. Cerca una città per iniziare.',
-            StackTrace.current);
-        return;
-      }
+
+      state = AsyncValue.data(cachedData);
 
       // Se viene fornito il nome della città, carica i dati dalla rete
       if (city != null && city.isNotEmpty) {
@@ -51,13 +44,12 @@ class WeatherNotifier extends StateNotifier<AsyncValue<WeatherModel?>> {
 
   Future<void> loadWeatherLatLong(double latitude, double longitude) async {
     try {
-      if (latitude != null && longitude != null) {
-        state = const AsyncValue.loading();
-        final weatherData = await _repository.fetchWeatherLatLong(latitude, longitude);
+      state = const AsyncValue.loading();
+      final weatherData =
+          await _repository.fetchWeatherLatLong(latitude, longitude);
 
-        await _weatherService.saveWeatherData(weatherData);
-        state = AsyncValue.data(weatherData);
-      }
+      await _weatherService.saveWeatherData(weatherData);
+      state = AsyncValue.data(weatherData);
     } on CityNotFoundException catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     } catch (e) {

@@ -44,14 +44,22 @@ class _WeatherPageState extends ConsumerState<WeatherPage> {
 
   Future<void> _searchWithPosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return Future.error('I servizi di localizzazione sono disabilitati.');
+    if (!serviceEnabled) {
+      return Future.error('I servizi di localizzazione sono disabilitati.');
+    }
 
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.deniedForever) return Future.error('I permessi sono permanentemente negati');
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('I permessi sono permanentemente negati');
+    }
 
     final position = await Geolocator.getCurrentPosition();
-    ref.read(weatherProvider.notifier).loadWeatherLatLong(position.latitude, position.longitude);
+    ref
+        .read(weatherProvider.notifier)
+        .loadWeatherLatLong(position.latitude, position.longitude);
   }
 
   @override
@@ -66,7 +74,8 @@ class _WeatherPageState extends ConsumerState<WeatherPage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async => ref.read(weatherProvider.notifier).refreshWeather(),
+        onRefresh: () async =>
+            ref.read(weatherProvider.notifier).refreshWeather(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -78,7 +87,7 @@ class _WeatherPageState extends ConsumerState<WeatherPage> {
                     controller: _searchController,
                     onSearch: _searchWeather,
                   ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
                 const WeatherContent(),
               ],
             ),

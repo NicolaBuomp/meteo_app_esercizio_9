@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meteo_app_esercizio_9/weather/ui/widgets/toggle_favorite_button.dart';
 import 'package:meteo_app_esercizio_9/weather/di/weather_provider.dart';
-import 'package:geolocator/geolocator.dart';
 
 class WeatherAppBar extends StatelessWidget {
   final bool showSearchField;
@@ -26,51 +25,88 @@ class WeatherAppBar extends StatelessWidget {
           title: weatherState.when(
             data: (weather) => weather != null
                 ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  weather.location,
-                  style: const TextStyle(fontSize: 26),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: onLocationSearch,
-                      icon: const Icon(
-                        Icons.location_on,
-                        size: 32,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        weather.location,
+                        style: const TextStyle(fontSize: 26),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: onToggleSearchField,
-                      icon: const Icon(
-                        Icons.search,
-                        size: 32,
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: onLocationSearch,
+                            icon: const Icon(
+                              Icons.location_on,
+                              size: 32,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: onToggleSearchField,
+                            icon: const Icon(
+                              Icons.search,
+                              size: 32,
+                            ),
+                          ),
+                          ToggleFavoriteButton(city: weather.location),
+                        ],
                       ),
-                    ),
-                    ToggleFavoriteButton(city: weather.location),
-                  ],
-                ),
-              ],
-            )
-                : const Text('Weather App'),
-            loading: () => const Text('Weather App'),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Weather App'),
+                      LocationAndSearchToggle(
+                          onLocationSearch: onLocationSearch,
+                          onToggleSearchField: onToggleSearchField),
+                    ],
+                  ),
+            loading: () => Text('Weather App'),
             error: (err, stack) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Weather App'),
-                IconButton(
-                  onPressed: onToggleSearchField,
-                  icon: const Icon(
-                    Icons.search,
-                    size: 32,
-                  ),
-                ),
+                LocationAndSearchToggle(
+                    onLocationSearch: onLocationSearch,
+                    onToggleSearchField: onToggleSearchField),
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class LocationAndSearchToggle extends StatelessWidget {
+  const LocationAndSearchToggle({
+    super.key,
+    required this.onLocationSearch,
+    required this.onToggleSearchField,
+  });
+
+  final VoidCallback onLocationSearch;
+  final VoidCallback onToggleSearchField;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: onLocationSearch,
+          icon: const Icon(
+            Icons.location_on,
+            size: 32,
+          ),
+        ),
+        IconButton(
+          onPressed: onToggleSearchField,
+          icon: const Icon(
+            Icons.search,
+            size: 32,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meteo_app_esercizio_9/weather/data/models/weather_model.dart';
 
-import '../../services/weather_service.dart';
-
 class WeatherInfo extends StatelessWidget {
   final WeatherModel weather;
 
@@ -30,7 +28,7 @@ class WeatherInfo extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
