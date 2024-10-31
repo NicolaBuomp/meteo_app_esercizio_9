@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meteo_app_esercizio_9/weather/services/favorite_city_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:meteo_app_esercizio_9/weather/services/weather_service.dart';
 
 class FavoriteCitiesNotifier extends StateNotifier<List<String>> {
-  final WeatherService _weatherService;
+  final FavoriteCityService _favoriteCityService;
 
-  FavoriteCitiesNotifier(this._weatherService) : super([]) {
+  FavoriteCitiesNotifier(this._favoriteCityService) : super([]) {
     _loadFavoriteCities();
   }
 
@@ -38,7 +38,7 @@ class FavoriteCitiesNotifier extends StateNotifier<List<String>> {
 
   Future<void> removeAll() async {
     state = [];
-    await _weatherService.clearCitiesCache();
+    await _favoriteCityService.clearCitiesCache();
   }
 
   Future<void> _saveFavoriteCities(List<String> cities) async {
@@ -50,5 +50,5 @@ class FavoriteCitiesNotifier extends StateNotifier<List<String>> {
 
 final favoriteCitiesProvider =
     StateNotifierProvider<FavoriteCitiesNotifier, List<String>>((ref) {
-  return FavoriteCitiesNotifier(WeatherService());
+  return FavoriteCitiesNotifier(FavoriteCityService());
 });

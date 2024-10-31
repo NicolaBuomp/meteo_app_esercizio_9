@@ -9,5 +9,5 @@ class Destination {
 
 const destinations = [
   Destination(label: 'Weather', icon: Icons.home_outlined),
-  Destination(label: 'Settings', icon: Icons.settings_outlined),
+  Destination(label: 'Impostazioni', icon: Icons.settings_outlined),
 ];

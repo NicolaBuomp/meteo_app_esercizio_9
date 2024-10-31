@@ -4,7 +4,6 @@ import '../data/models/weather_model.dart';
 
 class WeatherService {
   static const String _cacheWeatherData = 'cachedWeatherData';
-  static const String _cacheFavoriteCities = 'cacheFavoriteCities';
 
   Future<void> saveWeatherData(WeatherModel weather) async {
     final prefs = await SharedPreferences.getInstance();
@@ -36,40 +35,6 @@ class WeatherService {
       );
     }
     return null;
-  }
-
-  Future<void> setFavoriteCities(List<String> cities) async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoriteCities = jsonEncode(cities);
-    await prefs.setString(_cacheFavoriteCities, favoriteCities);
-  }
-
-  Future<List<String>> getFavoriteCities() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoriteCitiesData = prefs.getString(_cacheFavoriteCities);
-    if (favoriteCitiesData != null) {
-      return List<String>.from(jsonDecode(favoriteCitiesData));
-    }
-    return [];
-  }
-
-  Future<void> addFavoriteCity(String city) async {
-    final cities = await getFavoriteCities();
-    if (!cities.contains(city)) {
-      cities.add(city);
-      await setFavoriteCities(cities);
-    }
-  }
-
-  Future<void> clearAllCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_cacheWeatherData);
-    await prefs.remove(_cacheFavoriteCities);
-  }
-
-  Future<void> clearCitiesCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_cacheFavoriteCities);
   }
 
   Future<void> clearWeatherCache() async {
