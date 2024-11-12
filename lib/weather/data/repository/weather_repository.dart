@@ -6,7 +6,8 @@ class WeatherRepository {
   final String _apiKey = '5a6c17f7e5f94ff09bf180911242910';
   final String _baseUrl = 'http://api.weatherapi.com/v1/current.json';
 
-  Future<WeatherModel> fetchWeather(String city) async {
+  /// Fetch weather data by city name
+  Future<WeatherModel> getWeatherByCity(String city) async {
     try {
       final response = await _dio.get(
         _baseUrl,
@@ -24,11 +25,13 @@ class WeatherRepository {
         throw Exception('Failed to load weather data');
       }
     } catch (e) {
-      throw Exception('Error fetching weather data: $e');
+      throw Exception('Error fetching weather data for city: $e');
     }
   }
 
-  Future<WeatherModel> fetchWeatherLatLong(double latitude, double longitude) async {
+  /// Fetch weather data by latitude and longitude
+  Future<WeatherModel> getWeatherByCoordinates(
+      double latitude, double longitude) async {
     try {
       final response = await _dio.get(
         _baseUrl,
@@ -46,7 +49,7 @@ class WeatherRepository {
         throw Exception('Failed to load weather data');
       }
     } catch (e) {
-      throw Exception('Error fetching weather data: $e');
+      throw Exception('Error fetching weather data for coordinates: $e');
     }
   }
 }

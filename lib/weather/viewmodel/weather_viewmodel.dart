@@ -1,36 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meteo_app_esercizio_9/weather/di/weather_provider.dart';
+import 'package:geolocator/geolocator.dart';
 import '../data/models/weather_model.dart';
 import '../data/repository/weather_repository.dart';
-import '../services/weather_service.dart';
 
 class WeatherViewModel extends StateNotifier<AsyncValue<WeatherModel?>> {
   final WeatherRepository _repository;
-  final WeatherService _service;
 
-  WeatherViewModel(this._repository, this._service)
-      : super(const AsyncValue.loading()) {
-    _loadCachedWeather();
-  }
-
-  Future<void> _loadCachedWeather() async {
-    try {
-      final cachedWeather = await _service.getWeatherData();
-      if (cachedWeather != null) {
-        state = AsyncValue.data(cachedWeather);
-      } else {
-        state = const AsyncValue.data(null);
-      }
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
+  WeatherViewModel(this._repository) : super(const AsyncValue.loading());
 
   Future<void> loadWeather(String city) async {
     try {
       state = const AsyncValue.loading();
-      final weather = await _repository.fetchWeather(city);
-      await _service.saveWeatherData(weather);
+      final weather = await _repository.getWeatherByCity(city);
       state = AsyncValue.data(weather);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -41,8 +22,7 @@ class WeatherViewModel extends StateNotifier<AsyncValue<WeatherModel?>> {
     try {
       state = const AsyncValue.loading();
       final weather =
-          await _repository.fetchWeatherLatLong(latitude, longitude);
-      await _service.saveWeatherData(weather);
+          await _repository.getWeatherByCoordinates(latitude, longitude);
       state = AsyncValue.data(weather);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -50,20 +30,55 @@ class WeatherViewModel extends StateNotifier<AsyncValue<WeatherModel?>> {
   }
 
   Future<void> refreshWeather() async {
-    final currentWeather = state.value;
-    if (currentWeather != null) {
-      await loadWeather(currentWeather.location);
+    if (state.value != null) {
+      final weather = state.value!;
+      await loadWeather(weather.location);
     }
   }
 
+  Future<void> loadWeatherWithPermission() async {
+    try {
+      final position = await _determinePosition();
+      await loadWeatherByLocation(position.latitude, position.longitude);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception(
+          'I servizi di localizzazione sono disabilitati. Abilitali nelle impostazioni.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Permesso di localizzazione negato.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+          'Permesso negato permanentemente. Abilitalo nelle impostazioni.');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  /// Metodo per cancellare i dati meteo
   Future<void> clearWeatherData() async {
     state = const AsyncValue.data(null);
-    await _service.clearWeatherCache();
   }
 }
 
 final weatherViewModelProvider =
-    StateNotifierProvider<WeatherViewModel, AsyncValue<WeatherModel?>>(
-  (ref) =>
-      WeatherViewModel(ref.watch(weatherRepositoryProvider), WeatherService()),
-);
+    StateNotifierProvider<WeatherViewModel, AsyncValue<WeatherModel?>>((ref) {
+  final repository = WeatherRepository();
+  return WeatherViewModel(repository);
+});

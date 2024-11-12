@@ -4,7 +4,6 @@ import 'package:meteo_app_esercizio_9/weather/ui/widgets/search_bar.dart';
 import '../../viewmodel/weather_viewmodel.dart';
 import '../widgets/weather_content.dart';
 import '../widgets/weather_app_bar.dart';
-import 'package:geolocator/geolocator.dart';
 
 // StateProvider per gestire la visibilità della barra di ricerca
 final searchBarVisibilityProvider = StateProvider<bool>((ref) => false);
@@ -27,16 +26,17 @@ class WeatherPage extends ConsumerWidget {
         child: WeatherAppBar(
           showSearchField: showSearchField,
           onToggleSearchField: () {
-            // Cambia lo stato di visibilità della barra di ricerca
             ref.read(searchBarVisibilityProvider.notifier).state =
                 !showSearchField;
           },
           onLocationSearch: () async {
-            final position = await Geolocator.getCurrentPosition();
-            weatherViewModel.loadWeatherByLocation(
-              position.latitude,
-              position.longitude,
-            );
+            try {
+              await weatherViewModel.loadWeatherWithPermission();
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Errore: $e')),
+              );
+            }
           },
         ),
       ),
@@ -61,9 +61,15 @@ class WeatherPage extends ConsumerWidget {
                 const SizedBox(height: 16),
                 weatherState.when(
                   data: (weather) => WeatherContent(),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (err, _) => Text('Errore: $err'),
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  error: (err, _) => Center(
+                    child: Text(
+                      'Errore: $err',
+                      style: const TextStyle(fontSize: 18, color: Colors.red),
+                    ),
+                  ),
                 ),
               ],
             ),

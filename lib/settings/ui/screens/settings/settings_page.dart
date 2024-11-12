@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meteo_app_esercizio_9/Base/di/theme_provider.dart';
-import 'package:meteo_app_esercizio_9/weather/di/favorite_cities_provider.dart';
+import 'package:meteo_app_esercizio_9/weather/viewmodel/favorite_cities_viewmodel.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/weather_viewmodel.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -12,6 +12,8 @@ class SettingsPage extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final themeNotifier = ref.read(themeModeProvider.notifier);
     final weatherViewModel = ref.read(weatherViewModelProvider.notifier);
+    final favoriteCitiesViewModel =
+        ref.read(favoriteCitiesViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +36,7 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                await ref.read(favoriteCitiesProvider.notifier).removeAll();
+                await favoriteCitiesViewModel.removeAll();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Città salvate eliminate')),
                 );
@@ -45,7 +47,7 @@ class SettingsPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () async {
                 await weatherViewModel.clearWeatherData();
-                await ref.read(favoriteCitiesProvider.notifier).removeAll();
+                await favoriteCitiesViewModel.removeAll();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Tutti i dati eliminati')),
                 );
