@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meteo_app_esercizio_9/weather/di/search_bar_visibility_provider.dart';
 import 'package:meteo_app_esercizio_9/weather/ui/widgets/search_input.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/favorite_cities_viewmodel.dart';
 import '../../viewmodel/weather_viewmodel.dart';
@@ -16,7 +17,6 @@ class FavoriteCityList extends ConsumerWidget {
 
     return favoriteCitiesState.when(
       data: (favoriteCities) {
-        // Filtriamo le città preferite in base alla query di ricerca
         final filteredCities = favoriteCities.where((city) {
           return city.name.toLowerCase().contains(searchQuery.toLowerCase());
         }).toList();
@@ -75,7 +75,7 @@ class FavoriteCityList extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            city.name, // Usa il campo name del model
+                            city.name,
                             style: const TextStyle(fontSize: 18),
                           ),
                           Row(
@@ -84,6 +84,10 @@ class FavoriteCityList extends ConsumerWidget {
                                 icon: const Icon(Icons.search,
                                     color: Colors.grey),
                                 onPressed: () {
+                                  ref
+                                      .read(
+                                          searchBarVisibilityProvider.notifier)
+                                      .hide();
                                   ref
                                       .read(weatherViewModelProvider.notifier)
                                       .loadWeather(city.name);

@@ -62,7 +62,7 @@ class WeatherAppBar extends StatelessWidget {
                       ),
                     ],
                   ),
-            loading: () => const Text('Caricamento...'),
+            loading: () => null,
             error: (err, stack) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

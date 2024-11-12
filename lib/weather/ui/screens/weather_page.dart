@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meteo_app_esercizio_9/weather/di/search_bar_visibility_provider.dart';
 import 'package:meteo_app_esercizio_9/weather/ui/widgets/search_bar.dart';
 import '../../viewmodel/weather_viewmodel.dart';
 import '../widgets/weather_content.dart';
 import '../widgets/weather_app_bar.dart';
-
-// StateProvider per gestire la visibilità della barra di ricerca
-final searchBarVisibilityProvider = StateProvider<bool>((ref) => false);
 
 class WeatherPage extends ConsumerWidget {
   const WeatherPage({super.key});
@@ -15,10 +13,8 @@ class WeatherPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final weatherState = ref.watch(weatherViewModelProvider);
     final weatherViewModel = ref.read(weatherViewModelProvider.notifier);
-    final searchController = TextEditingController();
-
-    // Leggi lo stato di visibilità della barra di ricerca
     final showSearchField = ref.watch(searchBarVisibilityProvider);
+    final searchController = TextEditingController();
 
     return Scaffold(
       appBar: PreferredSize(
@@ -26,8 +22,7 @@ class WeatherPage extends ConsumerWidget {
         child: WeatherAppBar(
           showSearchField: showSearchField,
           onToggleSearchField: () {
-            ref.read(searchBarVisibilityProvider.notifier).state =
-                !showSearchField;
+            ref.read(searchBarVisibilityProvider.notifier).toggle();
           },
           onLocationSearch: () async {
             try {
@@ -55,6 +50,8 @@ class WeatherPage extends ConsumerWidget {
                       final city = searchController.text.trim();
                       if (city.isNotEmpty) {
                         weatherViewModel.loadWeather(city);
+                        ref.read(searchBarVisibilityProvider.notifier).hide();
+                        searchController.clear();
                       }
                     },
                   ),
