@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meteo_app_esercizio_9/weather/di/favorite_cities_provider.dart';
-import 'package:meteo_app_esercizio_9/weather/di/weather_provider.dart';
 import 'package:meteo_app_esercizio_9/weather/ui/widgets/search_input.dart';
+import '../../viewmodel/weather_viewmodel.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -79,8 +79,8 @@ class FavoriteCityList extends ConsumerWidget {
                             icon: const Icon(Icons.search, color: Colors.grey),
                             onPressed: () {
                               ref
-                                  .read(weatherProvider.notifier)
-                                  .loadWeather(city: city);
+                                  .read(weatherViewModelProvider.notifier)
+                                  .loadWeather(city);
                             },
                           ),
                           IconButton(

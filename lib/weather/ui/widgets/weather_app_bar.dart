@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meteo_app_esercizio_9/weather/ui/widgets/toggle_favorite_button.dart';
-import 'package:meteo_app_esercizio_9/weather/di/weather_provider.dart';
+import 'package:meteo_app_esercizio_9/weather/viewmodel/weather_viewmodel.dart';
 
 class WeatherAppBar extends StatelessWidget {
   final bool showSearchField;
@@ -19,7 +19,7 @@ class WeatherAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final weatherState = ref.watch(weatherProvider);
+        final weatherState = ref.watch(weatherViewModelProvider);
 
         return AppBar(
           title: weatherState.when(
@@ -55,20 +55,22 @@ class WeatherAppBar extends StatelessWidget {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Weather App'),
+                      const Text('Weather App'),
                       LocationAndSearchToggle(
-                          onLocationSearch: onLocationSearch,
-                          onToggleSearchField: onToggleSearchField),
+                        onLocationSearch: onLocationSearch,
+                        onToggleSearchField: onToggleSearchField,
+                      ),
                     ],
                   ),
-            loading: () => Text('Weather App'),
+            loading: () => const Text('Caricamento...'),
             error: (err, stack) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Weather App'),
                 LocationAndSearchToggle(
-                    onLocationSearch: onLocationSearch,
-                    onToggleSearchField: onToggleSearchField),
+                  onLocationSearch: onLocationSearch,
+                  onToggleSearchField: onToggleSearchField,
+                ),
               ],
             ),
           ),
