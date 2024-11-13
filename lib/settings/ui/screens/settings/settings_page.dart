@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meteo_app_esercizio_9/Base/di/theme_provider.dart';
+import 'package:meteo_app_esercizio_9/Base/viewmodel/theme_viewmodel.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/favorite_cities_viewmodel.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/weather_viewmodel.dart';
 
@@ -9,8 +9,8 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-    final themeNotifier = ref.read(themeModeProvider.notifier);
+    final themeMode = ref.watch(themeViewModelProvider);
+    final themeViewModel = ref.read(themeViewModelProvider.notifier);
     final weatherViewModel = ref.read(weatherViewModelProvider.notifier);
     final favoriteCitiesViewModel =
         ref.read(favoriteCitiesViewModelProvider.notifier);
@@ -74,7 +74,7 @@ class SettingsPage extends ConsumerWidget {
               groupValue: themeMode,
               onChanged: (value) {
                 if (value != null) {
-                  themeNotifier.state = value;
+                  themeViewModel.setLightMode();
                 }
               },
             ),
@@ -84,7 +84,7 @@ class SettingsPage extends ConsumerWidget {
               groupValue: themeMode,
               onChanged: (value) {
                 if (value != null) {
-                  themeNotifier.state = value;
+                  themeViewModel.setDarkMode();
                 }
               },
             ),
@@ -94,7 +94,7 @@ class SettingsPage extends ConsumerWidget {
               groupValue: themeMode,
               onChanged: (value) {
                 if (value != null) {
-                  themeNotifier.state = value;
+                  themeViewModel.setSystemMode();
                 }
               },
             ),

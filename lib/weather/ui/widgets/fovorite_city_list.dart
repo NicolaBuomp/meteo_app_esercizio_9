@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meteo_app_esercizio_9/weather/di/search_bar_visibility_provider.dart';
-import 'package:meteo_app_esercizio_9/weather/ui/widgets/search_input.dart';
+import 'package:meteo_app_esercizio_9/weather/ui/widgets/favorite_city_card.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/favorite_cities_viewmodel.dart';
-import '../../viewmodel/weather_viewmodel.dart';
-
-final searchQueryProvider = StateProvider<String>((ref) => '');
 
 class FavoriteCityList extends ConsumerWidget {
   const FavoriteCityList({super.key});
@@ -13,112 +9,35 @@ class FavoriteCityList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoriteCitiesState = ref.watch(favoriteCitiesViewModelProvider);
-    final searchQuery = ref.watch(searchQueryProvider);
 
     return favoriteCitiesState.when(
-      data: (favoriteCities) {
-        final filteredCities = favoriteCities.where((city) {
-          return city.name.toLowerCase().contains(searchQuery.toLowerCase());
-        }).toList();
-
-        if (favoriteCities.isEmpty) {
-          return const Text(
-            'Aggiungi una città ai preferiti',
-            style: TextStyle(fontSize: 18),
+      data: (cities) {
+        if (cities.isEmpty) {
+          return const Center(
+            child: Text(
+              'No favorite cities',
+              style: TextStyle(color: Colors.white),
+            ),
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Città preferite',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                TextButton(
-                  child: const Text('Svuota la lista'),
-                  onPressed: () {
-                    ref
-                        .read(favoriteCitiesViewModelProvider.notifier)
-                        .removeAll();
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            SearchInput(
-              onChanged: (value) {
-                ref.read(searchQueryProvider.notifier).state = value;
-              },
-            ),
-            const SizedBox(height: 16),
-            if (filteredCities.isEmpty)
-              const Text(
-                'Nessuna città trovata',
-                style: TextStyle(fontSize: 16),
-              )
-            else
-              SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredCities.length,
-                  itemBuilder: (context, index) {
-                    final city = filteredCities[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            city.name,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.search,
-                                    color: Colors.grey),
-                                onPressed: () {
-                                  ref
-                                      .read(
-                                          searchBarVisibilityProvider.notifier)
-                                      .hide();
-                                  ref
-                                      .read(weatherViewModelProvider.notifier)
-                                      .loadWeather(city.name);
-                                },
-                              ),
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  ref
-                                      .read(favoriteCitiesViewModelProvider
-                                          .notifier)
-                                      .removeCity(city.name);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-          ],
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: cities.map((city) {
+              return FavoriteCityCard(
+                city: city,
+                onTap: () {},
+              );
+            }).toList(),
+          ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, _) => Center(
+      error: (error, stackTrace) => Center(
         child: Text(
-          'Errore: $err',
-          style: const TextStyle(fontSize: 18, color: Colors.red),
+          'Error: $error',
+          style: const TextStyle(color: Colors.red),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meteo_app_esercizio_9/weather/ui/widgets/fovorite_city_list.dart';
 import 'package:meteo_app_esercizio_9/weather/viewmodel/weather_viewmodel.dart';
-import '../widgets/fovorite_city_list.dart';
 import '../widgets/weather_info.dart';
 
 class WeatherContent extends ConsumerWidget {

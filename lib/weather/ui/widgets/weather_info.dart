@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:meteo_app_esercizio_9/weather/data/models/weather_model.dart';
 
 class WeatherInfo extends StatelessWidget {
@@ -7,71 +6,93 @@ class WeatherInfo extends StatelessWidget {
 
   const WeatherInfo({super.key, required this.weather});
 
-  String _formatDate(String date) {
-    try {
-      final parsedDate = DateFormat("yyyy-MM-dd HH:mm").parse(date);
-      return DateFormat("dd MMMM yyyy, HH:mm").format(parsedDate);
-    } catch (e) {
-      return date;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      weather.location,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(25.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                '${weather.temperature}°C',
+                style:
+                    const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Image.network(
+                height: 200,
+                width: 200,
+                weather.iconUrl,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(width: 36),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Umidità',
+                        style: TextStyle(
+                          color: Color(0xFFB5B5B5),
+                        ),
+                      ),
+                      Text(
+                        '${weather.humidity}%',
+                        style: TextStyle(fontSize: 25),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Vento',
+                        style: TextStyle(
+                          color: Color(0xFFB5B5B5),
+                        ),
+                      ),
+                      Text(
+                        '${weather.windSpeed} km/h',
+                        style: TextStyle(fontSize: 25),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      print('Click');
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          'Dettagli',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xFFB5B5B5),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Icon(
+                          Icons.open_in_new_rounded,
+                          color: Color(0xFFB5B5B5),
+                        )
+                      ],
                     ),
-                    Text(
-                      weather.region,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      weather.country,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Image.network(
-                  height: 80,
-                  width: 80,
-                  weather.iconUrl,
-                  fit: BoxFit.contain,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '${weather.temperature}°C - ${weather.condition}',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Ultimo aggiornamento: ${_formatDate(weather.localtime)}',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text('Umidità: ${weather.humidity}%'),
-            Text('Vento: ${weather.windSpeed} km/h'),
-          ],
-        ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ],
       ),
     );
   }

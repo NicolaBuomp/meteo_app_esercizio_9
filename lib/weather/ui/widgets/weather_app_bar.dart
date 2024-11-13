@@ -25,25 +25,14 @@ class WeatherAppBar extends StatelessWidget {
           title: weatherState.when(
             data: (weather) => weather != null
                 ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        weather.location,
-                        style: const TextStyle(fontSize: 26),
-                      ),
                       Row(
                         children: [
                           IconButton(
                             onPressed: onLocationSearch,
                             icon: const Icon(
                               Icons.location_on,
-                              size: 32,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: onToggleSearchField,
-                            icon: const Icon(
-                              Icons.search,
                               size: 32,
                             ),
                           ),
@@ -55,7 +44,6 @@ class WeatherAppBar extends StatelessWidget {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Weather App'),
                       LocationAndSearchToggle(
                         onLocationSearch: onLocationSearch,
                         onToggleSearchField: onToggleSearchField,
